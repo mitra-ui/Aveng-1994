@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>SadewaPro — Form Pesanan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20,400,0,0" rel="stylesheet">
+<style>
+:root{
+  --green:#00aa5b;
+  --green-dark:#008f4c;
+  --green-soft:#effcf5;
+  --green-glow:rgba(0,170,91,.22);
+  --ink:#202124;
+  --muted:#5f6368;
+  --line:#dadce0;
+  --soft:#f8f9fa;
+  --white:#fff;
+  --danger:#d93025;
+  --shadow:0 12px 35px rgba(32,33,36,.07);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,Arial,sans-serif;color:var(--ink);background:#fff}
+body{overflow-x:hidden}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{
+  width:100%;
+  min-height:100vh;
+  background:#fff;
+}
+.appbar{
+  position:sticky;
+  top:0;
+  z-index:50;
+  height:68px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:0 18px;
+  background:#fff;
+  border-bottom:1px solid #eceff1;
+  box-shadow:0 1px 5px rgba(60,64,67,.08);
+}
+.brand{
+  flex:1;
+  min-width:0;
+}
+.brand-name{font-size:17px;font-weight:800;letter-spacing:-.3px}
+.brand-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.icon-btn{
+  width:40px;height:40px;border:1px solid #e3e6e8;background:#fff;
+  border-radius:12px;display:grid;place-items:center;color:#3c4043;
+  transition:.2s;
+}
+.icon-btn:hover{background:#f8f9fa;transform:translateY(-1px)}
+.icon-btn .material-symbols-rounded{font-size:21px}
+.main{
+  width:min(720px,100%);
+  margin:0 auto;
+  padding:24px 18px 110px;
+}
+.progress-wrap{padding:4px 2px 24px}
+.progress-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.progress-caption{font-size:11px;font-weight:700;color:#5f6368;letter-spacing:.5px;text-transform:uppercase}
+.progress-count{font-size:11px;color:#80868b;font-weight:600}
+.progress{
+  position:relative;height:7px;border-radius:99px;background:#edf0f1;overflow:hidden;
+}
+.progress-fill{
+  position:absolute;inset:0 auto 0 0;width:25%;border-radius:99px;
+  background:linear-gradient(90deg,#00aa5b,#1edb80,#00aa5b);
+  box-shadow:0 0 7px rgba(0,255,140,.5),0 0 18px rgba(0,170,91,.18);
+  transition:width .7s cubic-bezier(.22,1,.36,1);
+}
+.rail{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:10px;
+}
+.rail-item{display:flex;align-items:center;gap:7px;min-width:0}
+.rail-dot{
+  width:8px;height:8px;border-radius:50%;background:#d5d9dc;
+  box-shadow:0 0 0 2px #fff;transition:.45s;
+}
+.rail-item.active .rail-dot,.rail-item.done .rail-dot{
+  background:#00aa5b;
+  box-shadow:0 0 0 2px #fff,0 0 7px rgba(0,255,140,.7),0 0 16px rgba(0,170,91,.28);
+}
+.rail-label{font-size:10px;color:#9aa0a6;font-weight:600}
+.rail-item.active .rail-label,.rail-item.done .rail-label{color:#008f4c}
+.content-card{
+  border:1px solid #eceff1;
+  border-radius:22px;
+  background:#fff;
+  box-shadow:var(--shadow);
+  padding:26px 22px 24px;
+}
+.step{display:none}
+.step.active{display:block;animation:stepIn .35s cubic-bezier(.22,1,.36,1)}
+@keyframes stepIn{
+  from{opacity:0;transform:translateY(9px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  color:#008f4c;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;
+  margin-bottom:9px;
+}
+.eyebrow .material-symbols-rounded{font-size:17px}
+h1{font-size:25px;line-height:1.18;letter-spacing:-.8px;margin:0 0 8px;font-weight:400}
+.subtitle{font-size:13px;line-height:1.6;color:var(--muted);margin:0 0 25px}
+.section-title{margin-top:4px;
+  font-size:11px;font-weight:800;color:#80868b;letter-spacing:.8px;
+  text-transform:uppercase;margin:24px 0 12px;
+}
+.field{margin:0 0 15px}
+label{
+  display:block;font-size:12px;font-weight:700;color:#3c4043;margin:0 0 7px;
+  transition:.2s;
+}
+.field:focus-within label{color:#008f4c}
+.input-wrap{position:relative}
+.input-wrap .leading{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  color:#80868b;pointer-events:none;transition:.2s;
+}
+input,textarea,select{
+  width:100%;border:1px solid #dfe3e6;border-radius:13px;
+  background:#fbfcfc;color:#202124;outline:none;
+  padding:13px 14px;min-height:49px;
+  transition:border-color .2s,box-shadow .25s,background .2s,transform .2s;
+}
+.input-wrap input{padding-left:43px}
+textarea{min-height:100px;resize:vertical;line-height:1.5}
+select{appearance:auto}
+input::placeholder,textarea::placeholder{color:#9aa0a6}
+input:focus,textarea:focus,select:focus{
+  border-color:#00aa5b;
+  background:#f6fffa;
+  box-shadow:0 0 0 3px rgba(0,170,91,.10),0 5px 15px rgba(0,170,91,.07);
+}
+.input-wrap:focus-within .leading{color:#00aa5b}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hint{font-size:11px;color:#80868b;margin-top:6px;line-height:1.45}
+.error{font-size:11px;color:var(--danger);margin-top:5px;display:none}
+.invalid input,.invalid textarea,.invalid select{border-color:#d93025;background:#fff8f7}
+.invalid .error{display:block}
+.upload{
+  border:1.5px dashed #cdd3d7;border-radius:15px;padding:17px;
+  background:#fbfcfc;transition:.2s;
+}
+.upload:hover{border-color:#00aa5b;background:#f6fffa}
+.upload-top{display:flex;align-items:center;gap:12px}
+.upload-icon{
+  width:43px;height:43px;border-radius:12px;background:var(--green-soft);
+  color:#00aa5b;display:grid;place-items:center;flex:none;
+}
+.upload-copy{flex:1}.upload-copy b{font-size:12px}.upload-copy span{display:block;font-size:10px;color:#80868b;margin-top:3px}
+.upload input{display:none}
+.upload-btn{
+  border:1px solid #dfe3e6;background:#fff;border-radius:10px;padding:9px 11px;
+  color:#008f4c;font-size:11px;font-weight:800;
+}
+.preview{display:none;margin-top:12px;position:relative}
+.preview img{width:100%;max-height:210px;object-fit:cover;border-radius:12px;border:1px solid #e3e6e8}
+.remove-photo{
+  position:absolute;right:8px;top:8px;width:32px;height:32px;border:0;border-radius:50%;
+  background:rgba(32,33,36,.8);color:#fff;display:grid;place-items:center;
+}
+.checkbox{
+  display:flex;gap:10px;align-items:flex-start;padding:13px;border:1px solid #e6e9eb;
+  border-radius:13px;background:#fff;cursor:pointer;
+}
+.checkbox input{width:18px;height:18px;min-height:18px;margin:0;accent-color:#00aa5b;flex:none}
+.checkbox span{font-size:11px;line-height:1.55;color:#5f6368}
+.summary{
+  border:1px solid #e5e8ea;border-radius:16px;overflow:hidden;background:#fff;
+}
+.summary-section{padding:16px;border-bottom:1px solid #edf0f1}
+.summary-section:last-child{border-bottom:0}
+.summary-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.summary-head b{font-size:12px}.edit-link{border:0;background:none;color:#008f4c;font-size:10px;font-weight:800}
+.summary-row{display:flex;justify-content:space-between;gap:15px;margin:7px 0}
+.summary-row span{font-size:11px;color:#80868b}.summary-row strong{font-size:11px;text-align:right;max-width:60%;word-break:break-word}
+.total-box{
+  margin-top:14px;padding:16px;border-radius:15px;background:#f1fcf6;
+  border:1px solid #d7f3e3;display:flex;justify-content:space-between;align-items:center;
+}
+.total-box span{font-size:11px;color:#4f6359}.total-box strong{font-size:18px;color:#008f4c}
+.actions{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  padding:12px max(18px,calc((100vw - 720px)/2 + 18px));
+  background:rgba(255,255,255,.94);backdrop-filter:blur(12px);
+  border-top:1px solid #eceff1;display:flex;gap:10px;
+}
+.btn{
+  min-height:52px;border-radius:13px;padding:13px 19px;font-size:13px;font-weight:800;
+  border:1px solid transparent;transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+}
+.btn-secondary{background:#fff;border-color:#dfe3e6;color:#3c4043;min-width:105px}
+.btn-secondary:hover{background:#f8f9fa}
+.btn-primary{flex:1;background:#00aa5b;color:#fff;border-color:#00aa5b;box-shadow:0 5px 15px rgba(0,170,91,.18)}
+.btn-primary:hover{background:#008f4c;border-color:#008f4c;transform:translateY(-1px)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.success{
+  text-align:center;padding:25px 5px 8px;
+}
+.success-icon{
+  width:78px;height:78px;margin:0 auto 18px;border-radius:50%;
+  background:#effcf5;color:#00aa5b;display:grid;place-items:center;
+  box-shadow:0 0 0 9px #f8fffb,0 0 30px rgba(0,170,91,.18);
+  animation:successPop .55s cubic-bezier(.22,1,.36,1);
+}
+@keyframes successPop{from{opacity:0;transform:scale(.65)}to{opacity:1;transform:scale(1)}}
+.success-icon .material-symbols-rounded{font-size:42px}
+.order-code{
+  display:inline-block;margin-top:12px;padding:10px 15px;border-radius:11px;
+  background:#f8f9fa;border:1px solid #e5e8ea;font-size:13px;font-weight:800;letter-spacing:.7px;
+}
+.toast{
+  position:fixed;left:50%;bottom:82px;transform:translate(-50%,15px);
+  background:#202124;color:#fff;padding:11px 15px;border-radius:11px;font-size:11px;
+  opacity:0;pointer-events:none;transition:.25s;z-index:100;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:760px){
+  body{background:#f8f9fa}
+  .app{max-width:760px;margin:24px auto;min-height:calc(100vh - 48px);border-radius:24px;overflow:hidden;box-shadow:0 15px 50px rgba(32,33,36,.09)}
+  .appbar{position:relative}
+  .actions{position:absolute;left:0;right:0;bottom:0;max-width:760px;margin:auto}
+}
+@media(max-width:520px){
+  .main{padding:18px 13px 105px}
+  .content-card{padding:23px 17px 22px;border-radius:18px;box-shadow:0 8px 25px rgba(32,33,36,.05)}
+  .rail-label{display:none}
+  h1{font-size:23px;font-weight:400}
+  .two{grid-template-columns:1fr}
+  .actions{padding:10px 13px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation:none!important;transition:none!important}
+}
+
+/* Location picker */
+.location-card{
+  margin:0 0 18px;padding:14px;border:1px solid #dcefe5;border-radius:15px;
+  background:linear-gradient(135deg,#f7fffb,#fff);
+}
+.location-card-top{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.location-pin{
+  width:40px;height:40px;border-radius:12px;background:#eafff3;color:#00aa5b;
+  display:grid;place-items:center;flex:none;
+}
+.location-card-copy{flex:1}
+.location-card-copy b{display:block;font-size:13px;line-height:1.35}
+.location-card-copy span{display:block;font-size:11px;color:#80868b;margin-top:3px;line-height:1.45}
+.location-btn{
+  width:100%;min-height:47px;border:1px solid #00aa5b;border-radius:12px;
+  background:#fff;color:#008f4c;font-size:12px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:.2s;
+}
+.location-btn:hover{background:#effcf5;transform:translateY(-1px)}
+.location-btn.loading{opacity:.7;pointer-events:none}
+.location-status{display:none;margin-top:9px;font-size:10px;line-height:1.45;color:#008f4c}
+.location-status.show{display:block}
+.map-modal{
+  position:fixed;inset:0;z-index:200;background:rgba(32,33,36,.48);
+  backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center;
+}
+.map-modal.open{display:flex}
+.map-sheet{
+  width:min(720px,100%);height:min(82vh,680px);background:#fff;
+  border-radius:24px 24px 0 0;overflow:hidden;box-shadow:0 -12px 45px rgba(0,0,0,.18);
+  display:flex;flex-direction:column;animation:mapUp .32s cubic-bezier(.22,1,.36,1);
+}
+@keyframes mapUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.map-head{
+  min-height:64px;padding:12px 16px;display:flex;align-items:center;gap:11px;
+  border-bottom:1px solid #edf0f1;background:#fff;
+}
+.map-head-copy{flex:1}
+.map-head-copy b{font-size:14px;display:block}
+.map-head-copy span{font-size:10px;color:#80868b;display:block;margin-top:3px}
+.map-close{
+  width:38px;height:38px;border:1px solid #e1e4e6;background:#fff;border-radius:11px;
+  display:grid;place-items:center;color:#3c4043;
+}
+#locationMap{flex:1;min-height:0;background:#e9eef0}
+.map-footer{
+  padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+  border-top:1px solid #edf0f1;background:#fff;
+}
+.map-address{
+  font-size:11px;line-height:1.5;color:#5f6368;padding:10px 11px;
+  background:#f8f9fa;border-radius:11px;margin-bottom:9px;min-height:42px;
+}
+.map-use{
+  width:100%;height:50px;border:0;border-radius:12px;background:#00aa5b;color:#fff;
+  font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.map-use:disabled{opacity:.55}
+.leaflet-control-attribution{font-size:8px!important}
+.gps-marker{
+  width:18px;height:18px;border-radius:50%;background:#00aa5b;border:3px solid #fff;
+  box-shadow:0 0 0 5px rgba(0,170,91,.20),0 0 18px rgba(0,170,91,.42);
+}
+
+</style>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+</head>
+<body>
+<div class="app">
+  <header class="appbar">
+    <button class="icon-btn" onclick="goBack()" aria-label="Kembali">
+      <span class="material-symbols-rounded">arrow_back</span>
+    </button>
+    <div class="brand">
+      <div class="brand-name">SadewaPro</div>
+      <div class="brand-sub">Form Pesanan</div>
+    </div>
+    <button class="icon-btn" onclick="showHelp()" aria-label="Bantuan">
+      <span class="material-symbols-rounded">help_outline</span>
+    </button>
+  </header>
+
+  <main class="main">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span class="progress-caption" id="progressCaption">Langkah 1</span>
+        <span class="progress-count" id="progressCount">1 dari 4</span>
+      </div>
+      <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="rail">
+        <div class="rail-item active" data-rail="1"><span class="rail-dot"></span><span class="rail-label">Pemesan</span></div>
+        <div class="rail-item" data-rail="2"><span class="rail-dot"></span><span class="rail-label">Produk</span></div>
+        <div class="rail-item" data-rail="3"><span class="rail-dot"></span><span class="rail-label">Pengiriman</span></div>
+        <div class="rail-item" data-rail="4"><span class="rail-dot"></span><span class="rail-label">Konfirmasi</span></div>
+      </div>
+    </div>
+
+    <section class="content-card">
+      <form id="orderForm" novalidate>
+        <div class="step active" data-step="1">
+          <div class="eyebrow"><span class="material-symbols-rounded">person</span>Langkah 01</div>
+                    <p class="subtitle">Masukkan data pemesan dengan benar agar mudah dihubungi.</p>
+
+          <div class="section-title">Data Pemesan</div>
+          <div class="field" data-field="name">
+            <label for="name">Nama Lengkap</label>
+            <div class="input-wrap"><span class="leading material-symbols-rounded">person</span><input id="name" name="name" placeholder="Masukkan nama lengkap" autocomplete="name"></div>
+            <div class="error">Nama lengkap wajib diisi.</div>
+          </div>
+          <div class="field" data-field="phone">
+            <label for="phone">Nomor WhatsApp</label>
+            <div class="input-wrap"><span class="leading material-symbols-rounded">phone</span><input id="phone" name="phone" type="tel" placeholder="08xxxxxxxxxx" autocomplete="tel"></div>
+            <div class="error">Nomor WhatsApp wajib diisi.</div>
+          </div>
+          <div class="field" data-field="email">
+            <label for="email">Email</label>
+            <div class="input-wrap"><span class="leading material-symbols-rounded">mail</span><input id="email" name="email" type="email" placeholder="nama@email.com" autocomplete="email"></div>
+            <div class="error">Email wajib diisi.</div>
+          </div>
+        </div>
+
+        <div class="step" data-step="2">
+          <div class="eyebrow"><span class="material-symbols-rounded">shopping_bag</span>Langkah 02</div>
+                    <p class="subtitle">Lengkapi informasi produk dan jumlah pesanan.</p>
+
+          <div class="section-title">Data Produk</div>
+          <div class="field" data-field="code">
+            <label for="code">Kode Produk</label>
+            <div class="input-wrap"><span class="leading material-symbols-rounded">qr_code_2</span><input id="code" name="code" placeholder="Masukkan kode produk"></div>
+            <div class="error">Kode produk wajib diisi.</div>
+          </div>
+          <div class="field" data-field="product">
+            <label for="product">Nama Produk</label>
+            <div class="input-wrap"><span class="leading material-symbols-rounded">inventory_2</span><input id="product" name="product" placeholder="Masukkan nama produk"></div>
+            <div class="error">Nama produk wajib diisi.</div>
+          </div>
+          <div class="two">
+            <div class="field" data-field="price">
+              <label for="price">Harga Produk</label>
+              <div class="input-wrap"><span class="leading material-symbols-rounded">payments</span><input id="price" name="price" inputmode="numeric" placeholder="Rp 0"></div>
+              <div class="error">Harga wajib diisi.</div>
+            </div>
+            <div class="field" data-field="qty">
+              <label for="qty">Jumlah</label>
+              <div class="input-wrap"><span class="leading material-symbols-rounded">numbers</span><input id="qty" name="qty" type="number" min="1" value="1"></div>
+              <div class="error">Jumlah wajib diisi.</div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="notes">Catatan Pesanan <span style="font-weight:400;color:#9aa0a6">(opsional)</span></label>
+            <textarea id="notes" name="notes" placeholder="Tambahkan catatan jika diperlukan..."></textarea>
+          </div>
+        </div>
+
+        <div class="step" data-step="3">
+          <div class="eyebrow"><span class="material-symbols-rounded">local_shipping</span>Langkah 03</div>
+                    <p class="subtitle">Isi alamat tujuan dan pilih layanan pengiriman.</p>
+
+          <div class="location-card">
+            <div class="location-card-top">
+              <div class="location-pin"><span class="material-symbols-rounded">my_location</span></div>
+              <div class="location-card-copy">
+                <b>Gunakan lokasi perangkat</b>
+                <span>GPS akan membantu mengisi alamat pengiriman secara otomatis.</span>
+              </div>
+            </div>
+            <button type="button" class="location-btn" id="locationBtn" onclick="openLocationPicker()">
+              <span class="material-symbols-rounded">near_me</span> Gunakan Lokasi Saya
+            </button>
+            <div class="location-status" id="locationStatus"></div>
+          </div>
+
+          <div class="section-title">Alamat Tujuan</div>
+          <div class="field" data-field="address">
+            <label for="address">Alamat Lengkap</label>
+            <textarea id="address" name="address" placeholder="Nama jalan, nomor rumah, kecamatan, dan detail lainnya"></textarea>
+            <div class="error">Alamat wajib diisi.</div>
+          </div>
+          <div class="two">
+            <div class="field" data-field="postal">
+              <label for="postal">Kode Pos</label>
+              <input id="postal" name="postal" inputmode="numeric" placeholder="Masukkan kode pos">
+              <div class="error">Kode pos wajib diisi.</div>
+            </div>
+            <div class="field" data-field="shipping">
+              <label for="shipping">Layanan</label>
+              <select id="shipping" name="shipping">
+                <option value="">Pilih layanan</option>
+                <option>Reguler</option>
+                <option>Express</option>
+                <option>Same Day</option>
+              </select>
+              <div class="error">Layanan wajib dipilih.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step" data-step="4">
+          <div class="eyebrow"><span class="material-symbols-rounded">fact_check</span>Langkah 04</div>
+          <h1>Periksa Pesanan</h1>
+          <p class="subtitle">Pastikan semua informasi sudah benar sebelum dikirim.</p>
+
+          <div class="summary" id="summary">
+            <div class="summary-section">
+              <div class="summary-head"><b>Pemesan</b><button type="button" class="edit-link" onclick="jumpTo(1)">UBAH</button></div>
+              <div class="summary-row"><span>Nama</span><strong id="sName">—</strong></div>
+              <div class="summary-row"><span>WhatsApp</span><strong id="sPhone">—</strong></div>
+              <div class="summary-row"><span>Email</span><strong id="sEmail">—</strong></div>
+            </div>
+            <div class="summary-section">
+              <div class="summary-head"><b>Produk</b><button type="button" class="edit-link" onclick="jumpTo(2)">UBAH</button></div>
+              <div class="summary-row"><span>Kode Produk</span><strong id="sCode">—</strong></div>
+              <div class="summary-row"><span>Nama Produk</span><strong id="sProduct">—</strong></div>
+              <div class="summary-row"><span>Jumlah</span><strong id="sQty">—</strong></div>
+            </div>
+            <div class="summary-section">
+              <div class="summary-head"><b>Pengiriman</b><button type="button" class="edit-link" onclick="jumpTo(3)">UBAH</button></div>
+              <div class="summary-row"><span>Alamat</span><strong id="sAddress">—</strong></div>
+              <div class="summary-row"><span>Layanan</span><strong id="sShipping">—</strong></div>
+            </div>
+          </div>
+          <div class="total-box"><span>Total Produk</span><strong id="sTotal">Rp 0</strong></div>
+
+          <div class="section-title">Persetujuan</div>
+          <label class="checkbox">
+            <input id="terms" type="checkbox">
+            <span>Saya sudah memeriksa informasi pesanan dan menyetujui syarat dan ketentuan yang berlaku.</span>
+          </label>
+          <div class="error" id="termsError" style="margin-left:28px">Persetujuan diperlukan sebelum pesanan dikirim.</div>
+        </div>
+
+        <div class="step" data-step="success">
+          <div class="success">
+            <div class="success-icon"><span class="material-symbols-rounded">check</span></div>
+            <div class="eyebrow" style="justify-content:center">Pesanan berhasil dibuat</div>
+            <h1>Terima kasih!</h1>
+            <p class="subtitle">Data pesanan kamu sudah diterima dan sedang diproses.</p>
+            <div class="order-code" id="orderCode">DAV-000000</div>
+          </div>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <div class="actions" id="actions">
+    <button class="btn btn-secondary" id="backBtn" onclick="previousStep()" style="display:none">
+      <span class="material-symbols-rounded">arrow_back</span> Kembali
+    </button>
+    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">
+      Lanjutkan <span class="material-symbols-rounded">arrow_forward</span>
+    </button>
+  </div>
+</div>
+
+<div class="map-modal" id="mapModal" aria-hidden="true">
+  <div class="map-sheet">
+    <div class="map-head">
+      <div class="location-pin"><span class="material-symbols-rounded">location_on</span></div>
+      <div class="map-head-copy">
+        <b>Pilih Lokasi Pengiriman</b>
+        <span>Posisi GPS perangkat kamu</span>
+      </div>
+      <button type="button" class="map-close" onclick="closeLocationPicker()" aria-label="Tutup">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+    <div id="locationMap"></div>
+    <div class="map-footer">
+      <div class="map-address" id="mapAddress">Mencari lokasi perangkat...</div>
+      <button type="button" class="map-use" id="useLocationBtn" onclick="useSelectedLocation()" disabled>
+        <span class="material-symbols-rounded">check</span> Gunakan Lokasi Ini
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+const totalSteps=4;
+let currentStep=1;
+
+const titles={
+  1:"Langkah 1",
+  2:"Langkah 2",
+  3:"Langkah 3",
+  4:"Periksa Pesanan"
+};
+
+function el(id){return document.getElementById(id)}
+function val(id){return (el(id)?.value||"").trim()}
+
+function setStep(step){
+  currentStep=step;
+  document.querySelectorAll(".step[data-step]").forEach(x=>{
+    x.classList.toggle("active",x.dataset.step==step);
+  });
+  document.querySelectorAll(".rail-item").forEach(x=>{
+    const n=Number(x.dataset.rail);
+    x.classList.toggle("active",n===step);
+    x.classList.toggle("done",n<step);
+  });
+  el("progressFill").style.width=(step/totalSteps*100)+"%";
+  el("progressCaption").textContent=titles[step];
+  el("progressCount").textContent=step+" dari "+totalSteps;
+  el("backBtn").style.display=step>1?"inline-flex":"none";
+  el("nextBtn").innerHTML=step===4
+    ? '<span class="material-symbols-rounded">check</span> Konfirmasi Pesanan'
+    : 'Lanjutkan <span class="material-symbols-rounded">arrow_forward</span>';
+  if(step===4) updateSummary();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function validateStep(step){
+  const required={
+    1:["name","phone","email"],
+    2:["code","product","price","qty"],
+    3:["address","postal","shipping"]
+  };
+  let ok=true;
+  (required[step]||[]).forEach(id=>{
+    const field=document.querySelector(`[data-field="${id}"]`);
+    const value=val(id);
+    if(!value || (id==="qty" && Number(value)<1)){
+      field?.classList.add("invalid");ok=false;
+    }else field?.classList.remove("invalid");
+  });
+  if(!ok) showToast("Lengkapi data yang diperlukan.");
+  return ok;
+}
+
+function nextStep(){
+  if(!validateStep(currentStep)) return;
+  if(currentStep<4){setStep(currentStep+1);return}
+  if(!el("terms").checked){
+    el("termsError").style.display="block";
+    showToast("Silakan setujui persetujuan terlebih dahulu.");
+    return;
+  }
+  submitForm();
+}
+function previousStep(){if(currentStep>1)setStep(currentStep-1)}
+function jumpTo(step){setStep(step)}
+function updateSummary(){
+  el("sName").textContent=val("name")||"—";
+  el("sPhone").textContent=val("phone")||"—";
+  el("sEmail").textContent=val("email")||"—";
+  el("sCode").textContent=val("code")||"—";
+  el("sProduct").textContent=val("product")||"—";
+  el("sQty").textContent=val("qty")||"—";
+  el("sAddress").textContent=[val("address"),val("postal")].filter(Boolean).join(", ")||"—";
+  el("sShipping").textContent=val("shipping")||"—";
+  const raw=Number((val("price")||"").replace(/\D/g,""))||0;
+  const qty=Number(val("qty"))||1;
+  el("sTotal").textContent=formatRupiah(raw*qty);
+}
+function formatRupiah(n){return "Rp "+Number(n||0).toLocaleString("id-ID")}
+el("price").addEventListener("input",e=>{
+  const n=e.target.value.replace(/\D/g,"");
+  e.target.value=n?formatRupiah(n):"";
+});
+document.querySelectorAll("input,textarea,select").forEach(x=>{
+  x.addEventListener("input",()=>x.closest(".field")?.classList.remove("invalid"));
+  x.addEventListener("change",()=>x.closest(".field")?.classList.remove("invalid"));
+});
+el("terms").addEventListener("change",()=>{
+  if(el("terms").checked)el("termsError").style.display="none";
+});
+async function submitForm(){
+  const code="DAV-"+Math.floor(100000+Math.random()*900000);
+  const submitButton=el("nextBtn");
+  const originalButton=submitButton.innerHTML;
+
+  const price=Number((val("price")||"").replace(/\\D/g,""))||0;
+  const qty=Number(val("qty"))||1;
+
+  const payload={
+    orderCode:code,
+    name:val("name"),
+    phone:val("phone"),
+    email:val("email"),
+    productCode:val("code"),
+    product:val("product"),
+    price,
+    qty,
+    notes:val("notes"),
+    address:val("address"),
+    postal:val("postal"),
+    shipping:val("shipping"),
+    total:price*qty,
+    latitude:selectedCoords?.lat ?? null,
+    longitude:selectedCoords?.lng ?? null
+  };
+
+  submitButton.disabled=true;
+  submitButton.innerHTML='<span class="material-symbols-rounded">progress_activity</span> Mengirim...';
+
+  try{
+    const response=await fetch("/api/telegram",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload)
+    });
+
+    let result={};
+    try{ result=await response.json(); }catch(_){}
+
+    if(!response.ok || !result.ok){
+      throw new Error(result.error||"Pesanan gagal dikirim ke Telegram.");
+    }
+
+    el("orderCode").textContent=code;
+    document.querySelectorAll(".step").forEach(x=>x.classList.remove("active"));
+    document.querySelector('.step[data-step="success"]').classList.add("active");
+    document.querySelector(".progress-wrap").style.display="none";
+    el("actions").style.display="none";
+  }catch(error){
+    console.error(error);
+    showToast(error.message||"Gagal mengirim pesanan. Silakan coba lagi.");
+    submitButton.disabled=false;
+    submitButton.innerHTML=originalButton;
+  }
+}
+function goBack(){
+  if(currentStep>1)previousStep();
+  else if(history.length>1)history.back();
+  else showToast("Kamu sudah berada di halaman awal.");
+}
+function showHelp(){showToast("Bantuan SadewaPro siap membantu.");}
+let toastTimer;
+function showToast(message){
+  const t=el("toast");t.textContent=message;t.classList.add("show");
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2400);
+}
+setStep(1);
+
+let locationMap=null;
+let locationMarker=null;
+let selectedCoords=null;
+let selectedAddress="";
+let locationWatchId=null;
+
+function openLocationPicker(){
+  const modal=el("mapModal");
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+  el("mapAddress").textContent="Meminta izin lokasi GPS...";
+  el("useLocationBtn").disabled=true;
+
+  if(!navigator.geolocation){
+    el("mapAddress").textContent="Perangkat/browser tidak mendukung geolokasi.";
+    return;
+  }
+
+  setTimeout(()=>{
+    if(!locationMap){
+      locationMap=L.map("locationMap",{zoomControl:true}).setView([-2.5,118],5);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+        maxZoom:19,
+        attribution:"© OpenStreetMap contributors"
+      }).addTo(locationMap);
+    }
+    locationMap.invalidateSize();
+    requestDeviceLocation();
+  },120);
+}
+
+function closeLocationPicker(){
+  el("mapModal").classList.remove("open");
+  el("mapModal").setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+  if(locationWatchId!==null && navigator.geolocation){
+    navigator.geolocation.clearWatch(locationWatchId);
+    locationWatchId=null;
+  }
+}
+
+function requestDeviceLocation(){
+  navigator.geolocation.getCurrentPosition(
+    pos=>handleGPSPosition(pos),
+    err=>{
+      let msg="Lokasi tidak dapat diakses.";
+      if(err.code===1)msg="Izin lokasi ditolak. Aktifkan izin lokasi untuk situs ini.";
+      if(err.code===2)msg="Posisi GPS belum tersedia. Pastikan GPS/lokasi perangkat aktif.";
+      if(err.code===3)msg="Permintaan lokasi terlalu lama. Coba lagi.";
+      el("mapAddress").textContent=msg;
+      showToast(msg);
+    },
+    {enableHighAccuracy:true,timeout:15000,maximumAge:0}
+  );
+}
+
+function handleGPSPosition(pos){
+  const lat=pos.coords.latitude;
+  const lng=pos.coords.longitude;
+  selectedCoords={lat,lng};
+
+  if(!locationMarker){
+    const icon=L.divIcon({
+      className:"",
+      html:'<div class="gps-marker"></div>',
+      iconSize:[18,18],iconAnchor:[9,9]
+    });
+    locationMarker=L.marker([lat,lng],{icon}).addTo(locationMap);
+  }else{
+    locationMarker.setLatLng([lat,lng]);
+  }
+
+  locationMap.setView([lat,lng],17,{animate:true});
+  el("mapAddress").textContent="Mendapatkan alamat dari koordinat GPS...";
+  el("useLocationBtn").disabled=true;
+
+  reverseGeocode(lat,lng);
+}
+
+async function reverseGeocode(lat,lng){
+  try{
+    const url=`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&zoom=18&addressdetails=1`;
+    const response=await fetch(url,{headers:{"Accept":"application/json"}});
+    if(!response.ok)throw new Error("Reverse geocoding gagal");
+    const data=await response.json();
+    selectedAddress=data.display_name||"Lokasi GPS ditemukan";
+    el("mapAddress").textContent=selectedAddress;
+    el("useLocationBtn").disabled=false;
+  }catch(e){
+    selectedAddress=`Lokasi GPS: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    el("mapAddress").textContent=selectedAddress;
+    el("useLocationBtn").disabled=false;
+  }
+}
+
+function useSelectedLocation(){
+  if(!selectedCoords)return;
+
+  const a=el("mapAddress").textContent.trim();
+  el("address").value=a;
+  document.querySelector('[data-field="address"]')?.classList.remove("invalid");
+
+  el("locationStatus").textContent="✓ Lokasi GPS berhasil digunakan sebagai alamat pengiriman.";
+  el("locationStatus").classList.add("show");
+  closeLocationPicker();
+  showToast("Lokasi berhasil digunakan.");
+}
+
+el("mapModal").addEventListener("click",e=>{
+  if(e.target===el("mapModal"))closeLocationPicker();
+});
+
+</script>
+</body>
+</html>
