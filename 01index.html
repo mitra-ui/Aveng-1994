@@ -635,7 +635,7 @@ async function submitForm(){
   const submitButton=el("nextBtn");
   const originalButton=submitButton.innerHTML;
 
-  const price=Number((val("price")||"").replace(/\\D/g,""))||0;
+  const price=Number((val("price")||"").replace(/\D/g,""))||0;
   const qty=Number(val("qty"))||1;
 
   const payload={
