@@ -1,0 +1,7 @@
+{
+  "name": "sadewapro-form",
+  "private": true,
+  "scripts": {
+    "dev": "node server.js"
+  }
+}
