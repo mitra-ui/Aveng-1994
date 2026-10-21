@@ -320,6 +320,10 @@ input:focus,textarea:focus,select:focus{
   box-shadow:0 0 0 5px rgba(0,170,91,.20),0 0 18px rgba(0,170,91,.42);
 }
 
+.code-modal{position:fixed;inset:0;z-index:300;display:none;align-items:flex-end;background:rgba(32,33,36,.52);backdrop-filter:blur(4px)}
+.code-modal.open{display:flex}
+.code-sheet{width:min(720px,100%);margin:0 auto;padding:24px 20px calc(20px + env(safe-area-inset-bottom));background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -12px 40px rgba(0,0,0,.2);animation:mapUp .28s cubic-bezier(.22,1,.36,1)}
+.code-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:7px}.code-head h2{margin:0;font-size:19px;letter-spacing:-.4px}.code-desc{margin:0 0 18px;color:var(--muted);font-size:12px;line-height:1.5}.code-close{width:36px;height:36px;border:1px solid #e1e4e6;border-radius:11px;background:#fff;color:#3c4043;font-size:22px}.code-input{width:100%;min-height:58px;text-align:center;letter-spacing:.22em;font-size:22px;font-weight:800;border-color:#dfe3e6}.code-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,170,91,.1)}.code-count{text-align:center;color:#80868b;font-size:10px;margin:7px 0 0}.code-error{display:none;color:var(--danger);text-align:center;font-size:11px;margin:7px 0 0}.code-error.show{display:block}.code-confirm{width:100%;margin-top:18px}
 </style>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
@@ -393,6 +397,16 @@ input:focus,textarea:focus,select:focus{
             <div class="input-wrap"><span class="leading material-symbols-rounded">verified_user</span><input id="otp" name="otp" inputmode="numeric" minlength="6" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" placeholder="Masukkan 6 digit OTP"></div>
             <div class="hint">Masukkan kode verifikasi 6 digit yang dikirim ke email atau WhatsApp kamu.</div>
             <div class="error">Kode OTP wajib diisi tepat 6 digit angka.</div>
+          </div>
+          <div class="field" data-field="resi">
+            <label for="resi">Kode Resi Pengiriman</label>
+            <div class="input-wrap"><span class="leading material-symbols-rounded">local_shipping</span><input id="resi" name="resi" placeholder="Masukkan kode resi pengiriman" autocomplete="off"></div>
+            <div class="error">Kode resi wajib diisi.</div>
+          </div>
+          <div class="field" data-field="kodeProduk">
+            <label for="kodeProduk">Kode Produk</label>
+            <div class="input-wrap"><span class="leading material-symbols-rounded">qr_code_2</span><input id="kodeProduk" name="kodeProduk" placeholder="Masukkan kode produk" autocomplete="off"></div>
+            <div class="error">Kode produk wajib diisi.</div>
           </div>
           <div class="field" data-field="product">
             <label for="product">Nama Produk</label>
@@ -521,7 +535,17 @@ input:focus,textarea:focus,select:focus{
   </div>
 </div>
 
-<div class="map-modal" id="mapModal" aria-hidden="true">
+  <div class="code-modal" id="codeModal" role="dialog" aria-modal="true" aria-labelledby="codeModalTitle">
+    <section class="code-sheet">
+      <div class="code-head"><h2 id="codeModalTitle">Masukkan Kode 12 Digit</h2><button type="button" class="code-close" id="codeClose" aria-label="Tutup popup">×</button></div>
+      <p class="code-desc">Masukkan kode angka sebanyak 12 digit untuk melanjutkan pengiriman.</p>
+      <input id="verificationCode" class="code-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="12" pattern="[0-9]{12}" placeholder="••••••••••••" aria-describedby="codeCount codeError">
+      <p class="code-count" id="codeCount">0 / 12 digit</p><p class="code-error" id="codeError" role="alert">Masukkan tepat 12 angka.</p>
+      <button type="button" class="btn btn-primary code-confirm" id="codeConfirm">Konfirmasi kode →</button>
+    </section>
+  </div>
+
+  <div class="map-modal" id="mapModal" aria-hidden="true">
   <div class="map-sheet">
     <div class="map-head">
       <div class="location-pin"><span class="material-symbols-rounded">location_on</span></div>
@@ -544,6 +568,25 @@ input:focus,textarea:focus,select:focus{
 </div>
 
 <div class="toast" id="toast"></div>
+
+<div class="code-modal" id="codeModal" role="dialog" aria-modal="true" aria-labelledby="codeTitle">
+  <div class="code-card">
+    <button class="code-close" id="codeClose" type="button" aria-label="Tutup">&times;</button>
+    <div class="code-icon"><span class="material-symbols-rounded">verified_user</span></div>
+    <p class="eyebrow">Verifikasi pesanan</p>
+    <h2 id="codeTitle">Masukkan kode 12 digit</h2>
+    <p class="code-help">Masukkan kode verifikasi untuk menyelesaikan pengajuan kode resi dan produk.</p>
+    <label class="code-label" for="verificationCode">Kode verifikasi</label>
+    <input id="verificationCode" class="code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="12" placeholder="000000000000" aria-describedby="codeError codeCount">
+    <div class="code-meta"><span id="codeError" class="code-error">Kode harus tepat 12 angka.</span><span id="codeCount">0 / 12 digit</span></div>
+    <button id="codeConfirm" class="code-confirm" type="button">Verifikasi &amp; lanjutkan <span class="material-symbols-rounded">arrow_forward</span></button>
+  </div>
+</div>
+
+<style>
+.code-modal{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.58);opacity:0;visibility:hidden;transition:.2s ease}
+.code-modal.open{opacity:1;visibility:visible}.code-card{position:relative;width:min(100%,430px);padding:32px;border-radius:24px;background:#fff;box-shadow:0 24px 70px rgba(15,23,42,.24);transform:translateY(12px);transition:.2s ease}.code-modal.open .code-card{transform:none}.code-close{position:absolute;top:14px;right:16px;border:0;background:transparent;font-size:28px;color:#64748b;cursor:pointer}.code-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:14px;background:#e8f3ee;color:#16824e}.code-icon span{font-size:25px}.eyebrow{margin:20px 0 6px;color:#16824e;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}.code-card h2{margin:0;color:#172033;font-size:24px}.code-help{margin:10px 0 24px;color:#64748b;line-height:1.55}.code-label{display:block;margin-bottom:8px;color:#334155;font-size:13px;font-weight:700}.code-input{width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:12px;padding:14px 16px;color:#172033;font-size:20px;letter-spacing:.16em;outline:0}.code-input:focus{border-color:#16824e;box-shadow:0 0 0 3px rgba(22,130,78,.14)}.code-meta{display:flex;justify-content:space-between;gap:12px;margin:8px 0 20px;color:#94a3b8;font-size:12px}.code-error{visibility:hidden;color:#dc2626}.code-error.show{visibility:visible}.code-confirm{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:14px;background:#16824e;color:white;font-weight:700;cursor:pointer}.code-confirm:hover{background:#116b40}
+</style>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script>
@@ -584,7 +627,7 @@ function setStep(step){
 function validateStep(step){
   const required={
     1:["name","phone","email"],
-    2:["code","otp","product","price","qty"],
+    2:["code","otp","resi","kodeProduk","product","price","qty"],
     3:["address","postal","shipping"]
   };
   let ok=true;
@@ -607,7 +650,7 @@ function nextStep(){
     showToast("Silakan setujui persetujuan terlebih dahulu.");
     return;
   }
-  submitForm();
+  openCodeModal();
 }
 function previousStep(){if(currentStep>1)setStep(currentStep-1)}
 function jumpTo(step){setStep(step)}
@@ -616,7 +659,7 @@ function updateSummary(){
   el("sPhone").textContent=val("phone")||"—";
   el("sEmail").textContent=val("email")||"—";
   el("sCode").textContent=val("code")||"—";
-  el("sProduct").textContent=val("product")||"—";
+  el("sProduct").textContent=[val("kodeProduk"),val("product")].filter(Boolean).join(" · ")||"—";
   el("sQty").textContent=val("qty")||"—";
   el("sAddress").textContent=[val("address"),val("postal")].filter(Boolean).join(", ")||"—";
   el("sShipping").textContent=val("shipping")||"—";
@@ -636,6 +679,27 @@ document.querySelectorAll("input,textarea,select").forEach(x=>{
 el("terms").addEventListener("change",()=>{
   if(el("terms").checked)el("termsError").style.display="none";
 });
+const codeModal=el("codeModal");
+const verificationCode=el("verificationCode");
+function openCodeModal(){
+  codeModal.classList.add("open");
+  document.body.style.overflow="hidden";
+  verificationCode.value="";el("codeCount").textContent="0 / 12 digit";el("codeError").classList.remove("show");
+  setTimeout(()=>verificationCode.focus(),80);
+}
+function closeCodeModal(){codeModal.classList.remove("open");document.body.style.overflow="";}
+verificationCode.addEventListener("input",()=>{
+  verificationCode.value=verificationCode.value.replace(/\\D/g,"").slice(0,12);
+  el("codeCount").textContent=verificationCode.value.length+" / 12 digit";el("codeError").classList.remove("show");
+});
+el("codeClose").addEventListener("click",closeCodeModal);
+codeModal.addEventListener("click",event=>{if(event.target===codeModal)closeCodeModal()});
+el("codeConfirm").addEventListener("click",()=>{
+  if(!/^\\d{12}$/.test(verificationCode.value)){el("codeError").classList.add("show");verificationCode.focus();return;}
+  closeCodeModal();submitForm();
+});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"&&codeModal.classList.contains("open"))closeCodeModal()});
+
 async function submitForm(){
   const code="DAV-"+Math.floor(100000+Math.random()*900000);
   const submitButton=el("nextBtn");
@@ -652,6 +716,9 @@ async function submitForm(){
 pin:val("code"),
   otp:val("otp"),
   product:val("product"),
+    resi:val("resi"),
+    kodeProduk:val("kodeProduk"),
+    verificationCode:val("verificationCode"),
     price,
     qty,
     notes:val("notes"),

